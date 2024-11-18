@@ -11,7 +11,7 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { ImagePlus } from "lucide-react";
-import { supabase } from "./lib/supabaseClient";
+import { supabase } from "../lib/supabaseClient";
 
 // const ALLOWED_ITEMS = [
 //   "Clothing",
@@ -56,13 +56,16 @@ const DonateForm = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data: items, error: itemsError } = await supabase
+      const { data: allowed_items, error: itemsError } = await supabase
         .from("allowed_items")
         .select("*");
       if (itemsError) {
         toast.error("Failed to fetch allowed items.");
+        console.error(itemsError);
       } else {
-        setAllowedItems(items);
+        setAllowedItems(allowed_items);
+        console.log("Allowed items fetched successfully.");
+        console.log(allowed_items);
       }
     };
 
@@ -79,6 +82,7 @@ const DonateForm = () => {
       setFormData((prev) => ({ ...prev, address }));
     } catch (error) {
       toast.error("Failed to fetch address. Please try again.");
+      console.error(error);
     }
   };
 
