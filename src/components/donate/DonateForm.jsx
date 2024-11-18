@@ -60,7 +60,6 @@ const DonateForm = () => {
       const address = data.display_name || "Address not found";
       setFormData((prev) => ({ ...prev, address }));
     } catch (error) {
-      console.error("Error fetching address:", error);
       toast.error("Failed to fetch address. Please try again.");
     }
   };
@@ -98,8 +97,9 @@ const DonateForm = () => {
             Click on the map to select your location or adjust it manually.
           </p>
           <Input
-            value={`${formData.location.lat}, ${formData.location.lng}`}
+            value={formData.address || ""}
             readOnly
+            placeholder="Your address will appear here"
             className="w-full"
           />
         </div>
