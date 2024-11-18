@@ -7,23 +7,25 @@ import {
   LogOutIcon,
   Menu,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 
-const Sidebar = () => {
+const Sidebar = ({ isCollapsed, toggleCollapse }) => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
-    { icon: <HomeIcon size={30} />, label: "Browse", path: "/home" },
+    { icon: <HomeIcon size={30} />, label: "Browse", path: "/" },
     { icon: <ClockIcon size={30} />, label: "For You", path: "/for-you" },
     { icon: <ShoppingBagIcon size={30} />, label: "Sell", path: "/sell" },
     { icon: <GiftIcon size={30} />, label: "Donate", path: "/donate" },
     { icon: <UserIcon size={30} />, label: "Me", path: "/settings" },
   ];
 
-  const toggleeSidebar = () => {
+  const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
@@ -31,7 +33,7 @@ const Sidebar = () => {
     <>
       {/* Mobile Menu Toggle Sidebar */}
       <button
-        onClick={toggleeSidebar}
+        onClick={toggleSidebar}
         className="fixed top-4 left-4 z-100 p-2 rounded-md bg-[#0288D1] text-white md:hidden"
       >
         {isOpen ? <X size={30} /> : <Menu size={30} />}
@@ -39,13 +41,28 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 h-screen w-[240px] bg-[#0288D1] text-white flex flex-col transform transition-transform duration-300 ease-in-out md:translate-x-0 
+        className={`fixed left-0 top-0 h-screen ${
+          isCollapsed ? "w-16" : "w-[240px]"
+        } bg-[#0288D1] text-white flex flex-col transform transition-transform duration-300 ease-in-out md:translate-x-0 
             ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
-        {/* Logo (Top Section) */}
-        <div className="p-6 mb-8 mt-12 md:mt-0">
-          <h1 className="text-2x1 font-bold">Unstuffed</h1>
-          <p className="text-sm opacity-80">Sell, Share, Sustain</p>
+        {/* Logo and Collapse Button (Top Section) */}
+        <div className="flex items-center justify-between p-6 mb-8 mt-12 md:mt-0">
+          <div>
+            {!isCollapsed && (
+              <>
+                <h1 className="text-2x1 font-bold">Unstuffed</h1>
+                <p className="text-sm opacity-80">Sell, Share, Sustain</p>
+              </>
+            )}
+          </div>
+          <button onClick={toggleCollapse} className="md:block hidden">
+            {isCollapsed ? (
+              <ChevronRight size={30} />
+            ) : (
+              <ChevronLeft size={30} />
+            )}
+          </button>
         </div>
 
         {/* Navigation Links */}
@@ -60,7 +77,7 @@ const Sidebar = () => {
               }`}
             >
               {item.icon}
-              <span>{item.label}</span>
+              {!isCollapsed && <span>{item.label}</span>}
             </Link>
           ))}
         </nav>
@@ -68,7 +85,7 @@ const Sidebar = () => {
         {/* Logout Button (Bottom Section) */}
         <button className="flex items-center gap-4 px-6 py-4 hover:bg-white/10 transition-colors mb-4">
           <LogOutIcon size={30} />
-          <span>Logout</span>
+          {!isCollapsed && <span>Logout</span>}
         </button>
       </div>
 
