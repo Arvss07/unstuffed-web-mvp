@@ -1,13 +1,15 @@
 import React from "react";
+import DonateForm from "../components/donate/DonateForm";
+import DonateHero from "../components/donate/DonateHero";
 
 const Donate = () => {
   return (
-    <div className="text-center">
-      <h1 className="text-4xl font-bold mb-4">Donate Section Goes here</h1>
-      <p className="text-xl text-gray-600">
-        Unstuffed: Your sustainable marketplace for sharing and donating items
-      </p>
-    </div>
+    <>
+      <div>
+        <DonateHero />
+        <DonateForm />
+      </div>
+    </>
   );
 };
 
