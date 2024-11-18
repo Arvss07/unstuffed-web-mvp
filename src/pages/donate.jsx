@@ -1,6 +1,6 @@
 import React from "react";
-import DonateForm from "../components/donate/DonateForm";
-import DonateHero from "../components/donate/DonateHero";
+import DonateForm from "../components/DonateForm";
+import DonateHero from "../components/DonateHero";
 
 const Donate = () => {
   return (

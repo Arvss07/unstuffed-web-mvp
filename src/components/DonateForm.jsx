@@ -1,6 +1,6 @@
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { useState } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import {
   MapContainer,
@@ -11,16 +11,17 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { ImagePlus } from "lucide-react";
+import { supabase } from "./lib/supabaseClient";
 
-const ALLOWED_ITEMS = [
-  "Clothing",
-  "Furniture",
-  "Electronics",
-  "Books",
-  "Toys",
-  "Kitchen Items",
-  "Sports Equipment",
-];
+// const ALLOWED_ITEMS = [
+//   "Clothing",
+//   "Furniture",
+//   "Electronics",
+//   "Books",
+//   "Toys",
+//   "Kitchen Items",
+//   "Sports Equipment",
+// ];
 
 const ORGANIZATIONS = [
   { id: 1, name: "GHGH", logo: "/public/placeholder.svg" },
@@ -50,6 +51,23 @@ const DonateForm = () => {
     selectedOrganization: null,
     termsAccepted: false,
   });
+
+  const [allowedItems, setAllowedItems] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: items, error: itemsError } = await supabase
+        .from("allowed_items")
+        .select("*");
+      if (itemsError) {
+        toast.error("Failed to fetch allowed items.");
+      } else {
+        setAllowedItems(items);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const reverseGeocode = async (lat, lng) => {
     try {
@@ -115,9 +133,9 @@ const DonateForm = () => {
             className="w-full p-2 border rounded-md"
           >
             <option value="">Select Item to Donate</option>
-            {ALLOWED_ITEMS.map((item) => (
-              <option key={item} value={item}>
-                {item}
+            {allowedItems.map((item) => (
+              <option key={item.id} value={item.name}>
+                {item.name}
               </option>
             ))}
           </select>
