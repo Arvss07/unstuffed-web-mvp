@@ -10,6 +10,8 @@ import ForYou from "./pages/for-you";
 import Sell from "./pages/sell";
 import Donate from "./pages/donate";
 import Settings from "./pages/settings";
+import Login from "./pages/login";
+import Register from "./pages/register";
 
 export const navItems = [
   {
@@ -41,5 +43,15 @@ export const navItems = [
     to: "/settings",
     icon: <UserIcon className="h-4 w-4" />,
     page: <Settings />,
+  },
+  {
+    title: "Login",
+    to: "/login",
+    page: <Login />,
+  },
+  {
+    title: "Register",
+    to: "/register",
+    page: <Register />,
   },
 ];
