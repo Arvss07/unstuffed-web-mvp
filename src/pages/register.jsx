@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { PasswordInput } from "../components/ui/passwordInput";
 import { Checkbox } from "../components/ui/checkbox";
 import { toast } from "sonner";
 import {
@@ -71,18 +72,16 @@ const Register = () => {
         <form onSubmit={handleRegister} className="mt-8 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
+              <label
+                htmlFor="firstName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                First Name
+              </label>
               <Input
-                placeholder="Last Name"
-                value={formData.lastName}
-                onChange={(e) =>
-                  setFormData({ ...formData, lastName: e.target.value })
-                }
-                required
-              />
-            </div>
-            <div>
-              <Input
-                placeholder="First Name"
+                id="firstName"
+                type="text"
+                placeholder="Juan"
                 value={formData.firstName}
                 onChange={(e) =>
                   setFormData({ ...formData, firstName: e.target.value })
@@ -91,8 +90,34 @@ const Register = () => {
               />
             </div>
             <div>
+              <label
+                htmlFor="lastName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Last Name
+              </label>
               <Input
-                placeholder="Middle Name"
+                id="lastName"
+                type="text"
+                placeholder="Dela Cruz"
+                value={formData.lastName}
+                onChange={(e) =>
+                  setFormData({ ...formData, lastName: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="middleName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Middle Name
+              </label>
+              <Input
+                id="middleName"
+                type="text"
+                placeholder="Mendoza"
                 value={formData.middleName}
                 onChange={(e) =>
                   setFormData({ ...formData, middleName: e.target.value })
@@ -100,9 +125,16 @@ const Register = () => {
               />
             </div>
             <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Email
+              </label>
               <Input
+                id="email"
                 type="email"
-                placeholder="Email address"
+                placeholder="juandelacruz@gmail.com"
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
@@ -111,9 +143,16 @@ const Register = () => {
               />
             </div>
             <div>
+              <label
+                htmlFor="contactNumber"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Contact Number
+              </label>
               <Input
+                id="contactNumber"
                 type="tel"
-                placeholder="Contact Number"
+                placeholder="09123456789"
                 value={formData.contactNumber}
                 onChange={(e) =>
                   setFormData({ ...formData, contactNumber: e.target.value })
@@ -122,7 +161,14 @@ const Register = () => {
               />
             </div>
             <div>
+              <label
+                htmlFor="dateOfBirth"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Date of Birth
+              </label>
               <Input
+                id="dateOfBirth"
                 type="date"
                 value={formData.dateOfBirth}
                 onChange={(e) =>
@@ -132,8 +178,14 @@ const Register = () => {
               />
             </div>
             <div className="md:col-span-2">
-              <Input
-                type="password"
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Password
+              </label>
+              <PasswordInput
+                id="password"
                 placeholder="Password"
                 value={formData.password}
                 onChange={(e) =>

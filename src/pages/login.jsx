@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { PasswordInput } from "../components/ui/passwordInput";
 import { toast } from "sonner";
 import { supabase } from "../lib/supabaseClient";
 
@@ -74,8 +75,7 @@ const Login = () => {
               />
             </div>
             <div>
-              <Input
-                type="password"
+              <PasswordInput
                 placeholder="Password"
                 value={formData.password}
                 onChange={(e) =>

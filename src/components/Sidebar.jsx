@@ -10,12 +10,15 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 const Sidebar = ({ isCollapsed, toggleCollapse }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const { logout } = useAuth();
 
   const navItems = [
     { icon: <HomeIcon size={30} />, label: "Browse", path: "/" },
@@ -24,6 +27,11 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
     { icon: <GiftIcon size={30} />, label: "Donate", path: "/donate" },
     { icon: <UserIcon size={30} />, label: "Me", path: "/settings" },
   ];
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -83,7 +91,10 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
         </nav>
 
         {/* Logout Button (Bottom Section) */}
-        <button className="flex items-center gap-4 px-6 py-4 hover:bg-white/10 transition-colors mb-4">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-4 px-6 py-4 hover:bg-white/10 transition-colors mb-4"
+        >
           <LogOutIcon size={30} />
           {!isCollapsed && <span>Logout</span>}
         </button>
