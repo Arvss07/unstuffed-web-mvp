@@ -24,7 +24,7 @@ const LocationPicker = ({ setLocation }) => {
   return null;
 };
 
-const DonateForm = () => {
+const DonateForm = ({ user }) => {
   const [formData, setFormData] = useState({
     location: { lat: 16.4023, lng: 120.596 },
     itemType: "",
@@ -52,7 +52,7 @@ const DonateForm = () => {
       }
 
       const { data: ngo_data, error: ngo_error } = await supabase
-        .from("ngó")
+        .from("ngo")
         .select("*");
       if (ngo_error) {
         toast.error("Failed to fetch NGOs.");
@@ -90,13 +90,32 @@ const DonateForm = () => {
     setSelectedNgo(ngo);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.termsAccepted) {
       toast.error("Please accept the terms and conditions.");
       return;
     }
+
+    //upload photos
+    const uploadPhotoURLs = await uploadPhotos(formData.photos);
+
+    // donations details
+    const donationDetails = {
+      donated_by: user.id,
+      donated_to: selectedNgo.id,
+      donated_on: new Date().toISOString(),
+      items_donated: formData.itemType,
+      items_donated_link: uploadPhotoURLs.join(","),
+      user_location: formData.address,
+    };
+
+    await saveDonationsDetails(donationDetails);
+
     toast.success("Thank you for your donation!");
+    console.log("Donation Details: ");
+    console.log(donationDetails);
+    console.log("Form Data: ");
     console.log(formData);
   };
 
@@ -107,6 +126,55 @@ const DonateForm = () => {
       photos: [...prev.photos, ...files],
     }));
   };
+
+  // ===========================================
+  const uploadPhotos = async (photos) => {
+    const photosURLs = [];
+    for (let p of photos) {
+      const uniqueName = `${Date.now()}-${p.name}`;
+      const { data, error } = await supabase.storage
+        .from("unstuffed-mvp-bucket")
+        .upload(uniqueName, p, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+
+      if (error) {
+        console.error("Photo upload error", error);
+        toast.error("Failed to upload photo. Please try again later.");
+        continue;
+      }
+
+      const { publicURL, error: urlError } = supabase.storage
+        .from("unstuffed-mvp-bucket")
+        .getPublicUrl(uniqueName);
+
+      if (urlError) {
+        console.error("Error getting public URL", urlError);
+        toast.error("Failed to get public URL. Please try again later.");
+        continue;
+      }
+
+      console.log("Uploaded photo URL:", publicURL);
+      photosURLs.push(publicURL);
+    }
+    console.log("All uploaded photo URLs:", photosURLs);
+    return photosURLs;
+  };
+
+  const saveDonationsDetails = async (donationDetails) => {
+    const { data, error } = await supabase
+      .from("donations")
+      .insert(donationDetails);
+
+    if (error) {
+      toast.error("Error Saving donation details", error);
+      return;
+    }
+
+    toast.success("Donations saved successfully.");
+  };
+  // ===========================================
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-[1400px] mx-auto p-4">
@@ -252,9 +320,7 @@ const DonateForm = () => {
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
             <LocationPicker
-              setLocation={(location) =>
-                setFormData((prev) => ({ ...prev, location }))
-              }
+              setLocation={(location) => handleLocationChange(location)}
             />
             <Marker position={[formData.location.lat, formData.location.lng]}>
               <Popup>Your location</Popup>

@@ -32,7 +32,7 @@ const Donate = () => {
             {user.user_metadata.last_name}!
           </p>
         )}
-        <DonateForm />
+        <DonateForm user={user} />
       </div>
     </>
   );
