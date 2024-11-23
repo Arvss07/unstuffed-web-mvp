@@ -42,17 +42,18 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
       {/* Mobile Menu Toggle Sidebar */}
       <button
         onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-100 p-2 rounded-md bg-[#0288D1] text-white md:hidden"
+        className="fixed top-4 left-4 z-50 p-2 rounded-md bg-[#0288D1] text-white md:hidden"
       >
         {isOpen ? <X size={30} /> : <Menu size={30} />}
       </button>
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 h-screen ${
+        className={`fixed left-0 top-0 h-screen z-40 ${
           isCollapsed ? "w-16" : "w-[240px]"
-        } bg-[#0288D1] text-white flex flex-col transform transition-transform duration-300 ease-in-out md:translate-x-0 
-            ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
+        } bg-[#0288D1] text-white flex flex-col transform transition-transform duration-300 ease-in-out md:translate-x-0 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         {/* Logo and Collapse Button (Top Section) */}
         <div className="flex items-center justify-between p-6 mb-8 mt-12 md:mt-0">
@@ -100,7 +101,7 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
         </button>
       </div>
 
-      {/* Overlay for mobile*/}
+      {/* Overlay for mobile */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"

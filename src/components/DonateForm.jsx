@@ -13,25 +13,6 @@ import "leaflet/dist/leaflet.css";
 import { ImagePlus } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 
-// const ALLOWED_ITEMS = [
-//   "Clothing",
-//   "Furniture",
-//   "Electronics",
-//   "Books",
-//   "Toys",
-//   "Kitchen Items",
-//   "Sports Equipment",
-// ];
-
-const ORGANIZATIONS = [
-  { id: 1, name: "GHGH", logo: "/public/placeholder.svg" },
-  { id: 2, name: "DSWD", logo: "/public/placeholder.svg" },
-  { id: 3, name: "Baguio Health", logo: "/public/placeholder.svg" },
-  { id: 4, name: "City Hall", logo: "/public/placeholder.svg" },
-  { id: 5, name: "NGO", logo: "/public/placeholder.svg" },
-  { id: 6, name: "PNPSP", logo: "/public/placeholder.svg" },
-];
-
 const LocationPicker = ({ setLocation }) => {
   useMapEvents({
     click(e) {
@@ -53,6 +34,8 @@ const DonateForm = () => {
   });
 
   const [allowedItems, setAllowedItems] = useState([]);
+  const [ngos, setNgos] = useState([]);
+  const [selectedNgo, setSelectedNgo] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,6 +49,18 @@ const DonateForm = () => {
         setAllowedItems(allowed_items);
         console.log("Allowed items fetched successfully.");
         console.log(allowed_items);
+      }
+
+      const { data: ngo_data, error: ngo_error } = await supabase
+        .from("ngó")
+        .select("*");
+      if (ngo_error) {
+        toast.error("Failed to fetch NGOs.");
+        console.error(ngo_error);
+      } else {
+        setNgos(ngo_data);
+        console.log("NGOs fetched successfully.");
+        console.log(ngo_data);
       }
     };
 
@@ -91,6 +86,10 @@ const DonateForm = () => {
     reverseGeocode(location.lat, location.lng);
   };
 
+  const handleNgoSelect = (ngo) => {
+    setSelectedNgo(ngo);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.termsAccepted) {
@@ -98,6 +97,7 @@ const DonateForm = () => {
       return;
     }
     toast.success("Thank you for your donation!");
+    console.log(formData);
   };
 
   const handlePhotoUpload = (e) => {
@@ -151,32 +151,39 @@ const DonateForm = () => {
             Available Organizations
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {ORGANIZATIONS.map((org) => (
+            {ngos.map((ngo) => (
               <button
-                key={org.id}
+                key={ngo.id}
                 type="button"
-                onClick={() =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    selectedOrganization: org.id,
-                  }))
-                }
+                onClick={() => handleNgoSelect(ngo)}
                 className={`p-4 rounded-full border transition-all ${
-                  formData.selectedOrganization === org.id
+                  formData.selectedOrganization === ngo.id
                     ? "border-blue-500 shadow-lg"
                     : "border-gray-200"
                 }`}
               >
                 <img
-                  src={org.logo}
-                  alt={org.name}
+                  src={ngo.logo}
+                  alt={ngo.ngo_name}
                   className="w-12 h-12 mx-auto"
                 />
-                <p className="text-xs text-center mt-2">{org.name}</p>
+                <p className="text-xs text-center mt-2">{ngo.abbr}</p>
               </button>
             ))}
           </div>
+          <Button className="mt-4">See More</Button>
         </div>
+
+        {/* NGO Details */}
+        {selectedNgo && (
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-xl font-semibold mb-4">
+              {selectedNgo.ngo_name}
+            </h2>
+            <p className="text-gray-600 mb-4">{selectedNgo.donation_details}</p>
+            <p className="text-gray-600 mb-4">{selectedNgo.location}</p>
+          </div>
+        )}
 
         {/* Upload Photos */}
         <div className="bg-white rounded-lg shadow p-6">
@@ -245,7 +252,9 @@ const DonateForm = () => {
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
             <LocationPicker
-              setLocation={(location) => handleLocationChange(location)}
+              setLocation={(location) =>
+                setFormData((prev) => ({ ...prev, location }))
+              }
             />
             <Marker position={[formData.location.lat, formData.location.lng]}>
               <Popup>Your location</Popup>
