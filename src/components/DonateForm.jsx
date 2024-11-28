@@ -1,5 +1,6 @@
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { Checkbox } from "./ui/checkbox";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import {
@@ -27,30 +28,18 @@ const LocationPicker = ({ setLocation }) => {
 const DonateForm = ({ user }) => {
   const [formData, setFormData] = useState({
     location: { lat: 16.4023, lng: 120.596 },
-    itemType: "",
+    itemTypes: [],
     photos: [],
     selectedOrganization: null,
     termsAccepted: false,
   });
 
-  const [allowedItems, setAllowedItems] = useState([]);
+  const [items, setItems] = useState([]);
   const [ngos, setNgos] = useState([]);
   const [selectedNgo, setSelectedNgo] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data: allowed_items, error: itemsError } = await supabase
-        .from("allowed_items")
-        .select("*");
-      if (itemsError) {
-        toast.error("Failed to fetch allowed items.");
-        console.error(itemsError);
-      } else {
-        setAllowedItems(allowed_items);
-        console.log("Allowed items fetched successfully.");
-        console.log(allowed_items);
-      }
-
       const { data: ngo_data, error: ngo_error } = await supabase
         .from("ngo")
         .select("*");
@@ -66,6 +55,37 @@ const DonateForm = ({ user }) => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (selectedNgo) {
+      const fetchAllowedItems = async () => {
+        const { data: allowed_items, error: itemsError } = await supabase
+          .from("allowed_items")
+          .select("items_id")
+          .eq("ngo_id", selectedNgo.id);
+        if (itemsError) {
+          toast.error("Failed to fetch allowed items.");
+          console.error(itemsError);
+        } else {
+          const itemIds = allowed_items.map((item) => item.items_id);
+          const { data: items_data, error: itemsError } = await supabase
+            .from("items")
+            .select("*")
+            .in("id", itemIds);
+          if (itemsError) {
+            toast.error("Failed to fetch items.");
+            console.error(itemsError);
+          } else {
+            setItems(items_data);
+            console.log("Items fetched successfully.");
+            console.log(items_data);
+          }
+        }
+      };
+
+      fetchAllowedItems();
+    }
+  }, [selectedNgo]);
 
   const reverseGeocode = async (lat, lng) => {
     try {
@@ -88,6 +108,16 @@ const DonateForm = ({ user }) => {
 
   const handleNgoSelect = (ngo) => {
     setSelectedNgo(ngo);
+    setFormData((prev) => ({ ...prev, selectedOrganization: ngo.id }));
+  };
+
+  const handleItemSelect = (itemName) => {
+    setFormData((prev) => {
+      const itemTypes = prev.itemTypes.includes(itemName)
+        ? prev.itemTypes.filter((name) => name !== itemName)
+        : [...prev.itemTypes, itemName];
+      return { ...prev, itemTypes };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -105,7 +135,7 @@ const DonateForm = ({ user }) => {
       donated_by: user.id,
       donated_to: selectedNgo.id,
       donated_on: new Date().toISOString(),
-      items_donated: formData.itemType,
+      items_donated: formData.itemTypes.join(","),
       items_donated_link: uploadPhotoURLs.join(","),
       user_location: formData.address,
     };
@@ -130,10 +160,13 @@ const DonateForm = ({ user }) => {
   // ===========================================
   const uploadPhotos = async (photos) => {
     const photosURLs = [];
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const bucketName = "unstuffed-mvp-bucket";
+
     for (let p of photos) {
       const uniqueName = `${Date.now()}-${p.name}`;
       const { data, error } = await supabase.storage
-        .from("unstuffed-mvp-bucket")
+        .from(bucketName)
         .upload(uniqueName, p, {
           cacheControl: "3600",
           upsert: true,
@@ -145,16 +178,7 @@ const DonateForm = ({ user }) => {
         continue;
       }
 
-      const { publicURL, error: urlError } = supabase.storage
-        .from("unstuffed-mvp-bucket")
-        .getPublicUrl(uniqueName);
-
-      if (urlError) {
-        console.error("Error getting public URL", urlError);
-        toast.error("Failed to get public URL. Please try again later.");
-        continue;
-      }
-
+      const publicURL = `${supabaseUrl}/storage/v1/object/public/${bucketName}/${uniqueName}`;
       console.log("Uploaded photo URL:", publicURL);
       photosURLs.push(publicURL);
     }
@@ -194,25 +218,6 @@ const DonateForm = ({ user }) => {
           />
         </div>
 
-        {/* Items to Donate */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Allowed Stuff</h2>
-          <select
-            value={formData.itemType}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, itemType: e.target.value }))
-            }
-            className="w-full p-2 border rounded-md"
-          >
-            <option value="">Select Item to Donate</option>
-            {allowedItems.map((item) => (
-              <option key={item.id} value={item.name}>
-                {item.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
         {/* Organizations */}
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-semibold mb-4">
@@ -226,7 +231,7 @@ const DonateForm = ({ user }) => {
                 onClick={() => handleNgoSelect(ngo)}
                 className={`p-4 rounded-full border transition-all ${
                   formData.selectedOrganization === ngo.id
-                    ? "border-blue-500 shadow-lg"
+                    ? "border-blue-500 shadow-lg bg-blue-100"
                     : "border-gray-200"
                 }`}
               >
@@ -250,6 +255,34 @@ const DonateForm = ({ user }) => {
             </h2>
             <p className="text-gray-600 mb-4">{selectedNgo.donation_details}</p>
             <p className="text-gray-600 mb-4">{selectedNgo.location}</p>
+          </div>
+        )}
+
+        {/* Items to Donate */}
+        {selectedNgo && (
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-xl font-semibold mb-4">Allowed Stuff</h2>
+            <div className="grid grid-cols-2 gap-4">
+              {items.map((item) => (
+                <label
+                  key={item.id}
+                  htmlFor={`item-${item.id}`}
+                  className={`flex items-center space-x-2 cursor-pointer p-2 rounded-md transition-all ${
+                    formData.itemTypes.includes(item.name)
+                      ? "bg-blue-100 border-blue-500"
+                      : "border-gray-200"
+                  }`}
+                >
+                  <Checkbox
+                    id={`item-${item.id}`}
+                    checked={formData.itemTypes.includes(item.name)}
+                    onCheckedChange={() => handleItemSelect(item.name)}
+                    className="hidden"
+                  />
+                  <span>{item.name}</span>
+                </label>
+              ))}
+            </div>
           </div>
         )}
 
