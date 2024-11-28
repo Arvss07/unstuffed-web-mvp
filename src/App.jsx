@@ -17,7 +17,9 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <BrowserRouter
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
         <div className="flex min-h-screen bg-gray-100">
           {user && (
             <Sidebar

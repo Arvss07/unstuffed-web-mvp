@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
-import { supabase } from "../lib/supabaseClient";
+import { supabaseAdmin } from "../lib/supabaseClient";
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -36,20 +36,24 @@ const Register = () => {
 
     setLoading(true);
     try {
-      // Placeholder for Supabase registration
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error } = await supabaseAdmin.auth.admin.createUser({
         email: formData.email,
         password: formData.password,
-        options: {
-          data: {
-            first_name: formData.firstName,
-            last_name: formData.lastName,
-            middle_name: formData.middleName,
-            contact_number: formData.contactNumber,
-            date_of_birth: formData.dateOfBirth,
-          },
+        email_confirmed_at: new Date().toISOString(),
+        confirmed_at: new Date().toISOString(),
+        user_metadata: {
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          middle_name: formData.middleName,
+          contact_number: formData.contactNumber,
+          date_of_birth: formData.dateOfBirth,
+          confirmed_at: new Date().toISOString(),
         },
       });
+
+      if (error) {
+        throw error;
+      }
 
       setShowConfirmDialog(true);
     } catch (error) {
@@ -232,11 +236,11 @@ const Register = () => {
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Check your email</DialogTitle>
+            <DialogTitle>Account Created</DialogTitle>
           </DialogHeader>
           <p className="text-center text-gray-600 mt-4">
-            We've sent you a confirmation email. Please check your inbox and
-            follow the instructions to verify your account.
+            Congratulations! You have successfully created an account. Please
+            head over to the login page to continue.
           </p>
           <Button
             onClick={() => {

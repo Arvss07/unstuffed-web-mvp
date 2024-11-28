@@ -20,9 +20,25 @@
    npm install
    ```
 
-4. Start the development server:
+4. Create an `.env` file in the root of the project and add the following environment variables:
+
+   ```bash
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   VITE_SUPABASE_ADMIN_KEY=your_supabase_admin_key
+   ```
+
+5. Start the development server:
+
    ```bash
    npm run dev
+   ```
+
+6. Login to the app using the following credentials:
+
+   ```bash
+   Email: admin@admin.com
+   Password: helloworld123
    ```
 
 ## Additional Information
