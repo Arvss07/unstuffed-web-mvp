@@ -18,17 +18,14 @@ const Index = () => {
     };
 
     const fetchDonations = async () => {
-      const { data: donations, error: donationsError } = await supabaseAdmin
-        .from("donations")
-        .select("*");
+      const { data: donations, error: donationsError } = await supabaseAdmin.from("donations").select("*");
 
       if (donationsError) {
         console.error("Error fetching donations:", donationsError);
         return;
       }
 
-      const { data: usersData, error: usersError } =
-        await supabaseAdmin.auth.admin.listUsers();
+      const { data: usersData, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
 
       if (usersError) {
         console.error("Error fetching users:", usersError);
@@ -54,13 +51,10 @@ const Index = () => {
       <h1 className="text-4xl font-bold mb-4">Home Page</h1>
       {user && (
         <p className="text-xl text-gray-600">
-          Welcome, {user.user_metadata.first_name}{" "}
-          {user.user_metadata.last_name}!
+          Welcome, {user.user_metadata.first_name} {user.user_metadata.last_name}!
         </p>
       )}
-      <p className="text-xl text-gray-600">
-        Unstuffed: Your sustainable marketplace for sharing and donating items
-      </p>
+      <p className="text-xl text-gray-600">Unstuffed: Your sustainable marketplace for sharing and donating items</p>
     </div>
   );
 };
