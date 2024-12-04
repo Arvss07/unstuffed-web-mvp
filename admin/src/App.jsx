@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-import { supabase } from "./_api/supabaseConfig";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import MainLayout from "./pages/MainLayout";
+import Donations from "./pages/Donations";
+import Home from "./pages/Home";
 
 const App = () => {
-  const [donations, setDonations] = useState();
-
-  useEffect(() => {
-    const fetch = async () => {
-      const { data, error } = await supabase.from("donations").select();
-      console.log(data);
-    };
-
-    fetch();
-  }, [donations]);
-
-  return <div>App</div>;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<Home />} />
+          <Route path="donation" element={<Donations />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 };
 
 export default App;

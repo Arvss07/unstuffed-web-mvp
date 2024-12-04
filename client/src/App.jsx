@@ -17,21 +17,10 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-      >
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <div className="flex min-h-screen bg-gray-100">
-          {user && (
-            <Sidebar
-              isCollapsed={isCollapsed}
-              toggleCollapse={handleCollapse}
-            />
-          )}
-          <main
-            className={`w-full ${
-              user ? (isCollapsed ? "md:ml-16" : "md:ml-[240px]") : ""
-            } p-8 transition-all duration-300`}
-          >
+          {user && <Sidebar isCollapsed={isCollapsed} toggleCollapse={handleCollapse} />}
+          <main className={`w-full ${user ? (isCollapsed ? "md:ml-16" : "md:ml-[240px]") : ""} p-8 transition-all duration-300`}>
             <Routes>
               {navItems.map((item) => (
                 <Route key={item.to} path={item.to} element={item.page} />
