@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  font-family: "Jost", serif;
+  color: "#0A0A0A";
+}
+
+@layer components {
+  .max-container {
+    max-width: 2000px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+}
+
+@layer utilities {
+  .hover-opacity {
+    @apply hover:opacity-50 duration-500 ease-in-out;
+  }
+
+  .hover-scaledown {
+    @apply hover:scale-75 duration-500 ease-in-out;
+  }
+  .padding {
+    @apply sm:px-16 px-8 sm:py-24 py-12;
+  }
+
+  .padding-x {
+    @apply sm:px-16 px-8;
+  }
+
+  .padding-y {
+    @apply sm:py-24 py-12;
+  }
+
+  .padding-l {
+    @apply sm:pl-16 pl-8;
+  }
+
+  .padding-r {
+    @apply sm:pr-16 pr-8;
+  }
+
+  .padding-t {
+    @apply sm:pt-24 pt-12;
+  }
+
+  .padding-b {
+    @apply sm:pb-24 pb-12;
+  }
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  font-family: "Jost", serif;
+  color: "#0A0A0A";
+}
+
+@layer components {
+  .max-container {
+    max-width: 2000px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+}
+
+@layer utilities {
+  .hover-opacity {
+    @apply hover:opacity-50 duration-500 ease-in-out;
+  }
+
+  .hover-scaledown {
+    @apply hover:scale-75 duration-500 ease-in-out;
+  }
+  .padding {
+    @apply sm:px-16 px-8 sm:py-24 py-12;
+  }
+
+  .padding-x {
+    @apply sm:px-16 px-8;
+  }
+
+  .padding-y {
+    @apply sm:py-24 py-12;
+  }
+
+  .padding-l {
+    @apply sm:pl-16 pl-8;
+  }
+
+  .padding-r {
+    @apply sm:pr-16 pr-8;
+  }
+
+  .padding-t {
+    @apply sm:pt-24 pt-12;
+  }
+
+  .padding-b {
+    @apply sm:pb-24 pb-12;
+  }
+}
