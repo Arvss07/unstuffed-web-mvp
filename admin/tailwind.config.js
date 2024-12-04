@@ -10,6 +10,7 @@ export default {
         primary_grey: "#EFF4FA",
         light_text: "#8F9BB3",
         drop_bg: "#F5F6FA",
+        blue_text: "#0189BE",
       },
     },
   },
