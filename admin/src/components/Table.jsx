@@ -5,10 +5,9 @@ import Button from "./Button";
 import { formatDate } from "../constants/utils";
 import DonationInformation from "./DonationInformation";
 
-const Table = ({ isFetching, isError, data }) => {
+const Table = ({ isFetching, isError, data, currentPage, setCurrentPage }) => {
   const [openedDonation, setOpenedDonation] = useState();
   const [openDonation, setOpenDonation] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const limitPerPage = 5;
 
   if (isFetching) return <h1>Fetching donations...</h1>;
@@ -36,18 +35,17 @@ const Table = ({ isFetching, isError, data }) => {
     setOpenDonation(true);
   };
 
-  console.log(openedDonation);
-
   return (
     <div>
       {openDonation && <DonationInformation donation={openedDonation} setClose={() => setOpenDonation(false)} />}
-      <table className="w-full max-w-5xl mx-auto border-collapse">
+      <table className="w-[1300px] mx-auto border-collapse">
         <thead>
           <tr className="font-semibold bg-light_primary text-white">
             <th className="p-4 pl-6 text-left">Name</th>
-            <th className="p-4 text-left">Date Donated</th>
-            <th className="p-4 text-left">Item Donated</th>
             <th className="p-4 text-left">Email</th>
+            <th className="p-4 text-left">Date Donated</th>
+            <th className="p-4 text-left">NGO</th>
+            <th className="p-4 text-left">Item Donated</th>
             <th className="p-4 pr-6">Action</th>
           </tr>
         </thead>
@@ -57,9 +55,11 @@ const Table = ({ isFetching, isError, data }) => {
               <td className="p-4">
                 {donation.firstName} {donation.lastName}
               </td>
-              <td className="p-4">{formatDate(donation.donated_on)}</td>
-              <td className="p-4">{donation.items_donated}</td>
               <td className="p-4">{donation.email}</td>
+              <td className="p-4">{formatDate(donation.donated_on)}</td>
+              <td className="p-4">{donation.ngo.ngo_name}</td>
+              <td className="p-4">{donation.items_donated}</td>
+
               <td className="p-4 flex gap-4 items-center justify-center">
                 <button onClick={() => handleOpenDonation(index)}>
                   <img src={info} alt="info" className="cursor-pointer" />
@@ -73,11 +73,11 @@ const Table = ({ isFetching, isError, data }) => {
       <div className="flex justify-center mt-6 gap-3">
         <Button disabled={currentPage === 1} onClick={handlePrev} text="prev" />
         <div className="flex items-center">
-          <p>{currentPage}</p>
+          <p>{data.length === 0 ? "0" : currentPage}</p>
           <p>/</p>
           <p>{totalPages}</p>
         </div>
-        <Button onClick={handleNext} text="next" disabled={currentPage === totalPages} />
+        <Button onClick={handleNext} text="next" disabled={currentPage === totalPages || data.length === 0} />
       </div>
     </div>
   );

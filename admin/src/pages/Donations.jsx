@@ -8,7 +8,7 @@ import Table from "../components/Table";
 
 const Donations = () => {
   const [search, setSearch] = useState("");
-
+  const [currentPage, setCurrentPage] = useState(1);
   const [donations, setDonations] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -46,6 +46,7 @@ const Donations = () => {
   const parsedData = donations.filter(
     (donation) =>
       donation.firstName.includes(search) ||
+      donation.ngo.ngo_name.includes(search) ||
       donation.lastName.includes(search) ||
       donation.items_donated.includes(search) ||
       donation.email.includes(search)
@@ -58,8 +59,14 @@ const Donations = () => {
           <img src={donation_hero} alt="donations" />
         </div>
         <div className="flex flex-col mt-20 gap-10">
-          <Searchbar value={search} onChange={(e) => setSearch(e.target.value)} />
-          <Table isError={isError} isFetching={isFetching} data={parsedData} />
+          <Searchbar
+            value={search}
+            onChange={(e) => {
+              setCurrentPage(1);
+              setSearch(e.target.value);
+            }}
+          />
+          <Table currentPage={currentPage} setCurrentPage={setCurrentPage} isError={isError} isFetching={isFetching} data={parsedData} />
         </div>
       </div>
     </div>
