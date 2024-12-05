@@ -42,14 +42,13 @@ const Donations = () => {
 
     fetch();
   }, []);
-
   const parsedData = donations.filter(
     (donation) =>
-      donation.firstName.includes(search) ||
-      donation.ngo.ngo_name.includes(search) ||
-      donation.lastName.includes(search) ||
-      donation.items_donated.includes(search) ||
-      donation.email.includes(search)
+      donation.firstName.toLowerCase().includes(search.toLowerCase()) ||
+      donation.ngo.ngo_name.toLowerCase().includes(search.toLowerCase()) ||
+      donation.lastName.toLowerCase().includes(search.toLowerCase()) ||
+      donation.items_donated.toLowerCase().includes(search.toLowerCase()) ||
+      donation.email.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
