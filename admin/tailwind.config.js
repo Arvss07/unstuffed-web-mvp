@@ -12,6 +12,7 @@ export default {
         drop_bg: "#F5F6FA",
         blue_bg: "#0189BE",
         blue_text: "#0189BE",
+        dark_grey: "#757575"
       },
     },
   },
