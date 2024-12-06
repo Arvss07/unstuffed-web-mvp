@@ -2,6 +2,7 @@ import React from "react";
 import { supabase } from "../_api/supabaseConfig";
 import Button from "./Button";
 import { Input } from "./Input";
+import ImageCarousel from "../components/ImageCarousel.jsx";
 
 const DonationInformation = ({ setClose, donation }) => {
   
@@ -118,29 +119,24 @@ const DonationInformation = ({ setClose, donation }) => {
             <label className="block text-sm font-medium text-blue_text mb-3">
               Donation Photos
             </label>
-            <div className="">
-              {photoUrls.map((url, index) => (
-                <div key={index} className="aspect-square px-5 py-3 max-h-[80%]">
-                  <img 
-                    src={url} 
-                    alt={`Donated item ${index + 1}`}
-                    className="w-[500px] h-full object-cover rounded-lg"
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="flex gap-2 items-center w-full">
+            <div className="flex flex-col gap-2">
+              <div className="flex h-[400px]">
+              <ImageCarousel images={photoUrls}  />      
+                </div>              
+              <div className="flex gap-2 items-center w-full">
               {accepted ? <h1 className="text-center font-bold text-xl mt-10">Already Accepted</h1> :
               <>
               <button onClick={rejectDonation} className="bg-dark_grey p-2 px-8 rounded-lg text-white w-[45%]">
                 Reject
               </button>
-              <button onClick={acceptDonation} className="bg-primary p-3 px-8 rounded-lg text-white w-[45%]">
+              <button onClick={acceptDonation} className="bg-primary p-2 px-8 rounded-lg text-white w-[45%]">
                 Receive
               </button>
               </>
               }
+            </div>      
             </div>
+     
           </div>
         </div>
       </div>
