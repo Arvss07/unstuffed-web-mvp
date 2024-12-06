@@ -4,7 +4,9 @@ import Button from "./Button";
 import { Input } from "./Input";
 
 const DonationInformation = ({ setClose, donation }) => {
+  
   const photoUrls = donation.items_donated_link.split(",");
+  const accepted = donation.accepted_donations.length !== 0;
 
   const rejectDonation = async () => {
     try{
@@ -19,35 +21,26 @@ const DonationInformation = ({ setClose, donation }) => {
     } catch (error) {
       console.error('Unexpected error: ', error)
     }
-
-    setClose();
   }
 
   const acceptDonation = async () => {
     try {
 
-      const insert = await supabase.from('accepted_donations').insert([
+      const insert = await supabase.from('accepted_donations').insert(
         {
-
-          created_at: new Date().toISOString(),
           donationId: donation.donation_id 
-
         }
-      ]);
+      );
 
       if(insert.error) {
         console.error('Error inserting into accepted_donations: ', insert.error);
         return;
       }
 
-      console.log("Moved to accepted_donations")
-
+      window.location.reload()
     } catch {
-
       console.error('Unexpected error: ', error);
-    
     }
-      setClose();
   }
 
   return (
@@ -136,14 +129,17 @@ const DonationInformation = ({ setClose, donation }) => {
                 </div>
               ))}
             </div>
-            <div className="flex gap-[20px] mr-[3%]">
-              <button onClick={acceptDonation} className="bg-primary p-3 px-8 rounded-lg text-white w-[45%]">
-                Receive
-              </button>
-
+            <div className="flex gap-2 items-center w-full">
+              {accepted ? <h1 className="text-center font-bold text-xl mt-10">Already Accepted</h1> :
+              <>
               <button onClick={rejectDonation} className="bg-dark_grey p-2 px-8 rounded-lg text-white w-[45%]">
                 Reject
               </button>
+              <button onClick={acceptDonation} className="bg-primary p-3 px-8 rounded-lg text-white w-[45%]">
+                Receive
+              </button>
+              </>
+              }
             </div>
           </div>
         </div>

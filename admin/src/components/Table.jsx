@@ -46,6 +46,7 @@ const Table = ({ isFetching, isError, data, currentPage, setCurrentPage }) => {
             <th className="p-4 text-left">Date Donated</th>
             <th className="p-4 text-left">NGO</th>
             <th className="p-4 text-left">Item Donated</th>
+            <th className="p-4 text-left">Status</th>
             <th className="p-4 pr-6">Action</th>
           </tr>
         </thead>
@@ -59,12 +60,16 @@ const Table = ({ isFetching, isError, data, currentPage, setCurrentPage }) => {
               <td className="p-4">{formatDate(donation.donated_on)}</td>
               <td className="p-4">{donation.ngo.ngo_name}</td>
               <td className="p-4">{donation.items_donated}</td>
-
+              <td className="p-4">{donation.accepted_donations.length > 0 ? "Accepted" : "Pending"}</td>
               <td className="p-4 flex gap-4 items-center justify-center">
                 <button onClick={() => handleOpenDonation(index)}>
                   <img src={info} alt="info" className="cursor-pointer" />
                 </button>
-                <img src={deleteIcon} alt="delete" className="cursor-pointer" />
+                {donation.accepted_donations.length == 0 && 
+                <button>
+                  <img src={deleteIcon} alt="delete" className="cursor-pointer" />
+                </button>
+                }
               </td>
             </tr>
           ))}

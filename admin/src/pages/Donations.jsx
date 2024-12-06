@@ -17,7 +17,7 @@ const Donations = () => {
     const fetch = async () => {
       setIsFetching(true);
 
-      const { data, error } = await supabase.from("donations").select("*,  ngo(*)");
+      const { data, error } = await supabase.from("donations").select("*,  ngo(*), accepted_donations(*)");
       const { data: users, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
 
       const result = data.map((donation) => {
@@ -42,6 +42,7 @@ const Donations = () => {
 
     fetch();
   }, []);
+
   const parsedData = donations.filter(
     (donation) =>
       donation.firstName.toLowerCase().includes(search.toLowerCase()) ||
@@ -50,6 +51,8 @@ const Donations = () => {
       donation.items_donated.toLowerCase().includes(search.toLowerCase()) ||
       donation.email.toLowerCase().includes(search.toLowerCase())
   );
+
+  console.log(parsedData)
 
   return (
     <div className="w-full">
